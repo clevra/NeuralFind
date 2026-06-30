@@ -12,6 +12,7 @@ cp content.js dist/
 cp popup.html dist/
 cp popup.js dist/
 cp THIRD-PARTY-LICENSES.txt dist/
+cp PRIVACY_POLICY.md dist/
 cp -r wasm dist/
 
 # Create the zip file for the Firefox Add-on store
