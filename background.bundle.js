@@ -33014,16 +33014,62 @@ var require_background = __commonJS({
     var classifierPipeline = null;
     async function getPipeline() {
       if (!classifierPipeline) {
-        console.log("[AI Background] Initializing AI model (this may take a moment on first run)...");
-        classifierPipeline = await pipeline2(
-          "zero-shot-classification",
-          "Xenova/mobilebert-uncased-mnli"
-        );
-        console.log("[AI Background] AI model loaded successfully on WebAssembly (CPU)!");
+        console.log("[AI Background] Initializing AI model...");
+        const storage = await browser.storage.local.get("useGPU");
+        const useGPU = storage.useGPU === true;
+        try {
+          console.log(`[AI Background] Loading model on ${useGPU ? "WebGPU" : "WebAssembly (CPU)"}...`);
+          const config = useGPU ? { device: "webgpu" } : { device: "wasm" };
+          classifierPipeline = await pipeline2(
+            "zero-shot-classification",
+            "Xenova/mobilebert-uncased-mnli",
+            config
+          );
+          console.log(`[AI Background] AI model loaded successfully on ${useGPU ? "WebGPU" : "WASM"}!`);
+          await browser.storage.local.set({ activeDevice: useGPU ? "webgpu" : "wasm" });
+        } catch (err) {
+          console.error("[AI Background] Model loading failed! Falling back to safe CPU mode...", err);
+          classifierPipeline = await pipeline2(
+            "zero-shot-classification",
+            "Xenova/mobilebert-uncased-mnli",
+            { device: "wasm" }
+          );
+          await browser.storage.local.set({ activeDevice: "wasm", useGPU: false });
+        }
       }
       return classifierPipeline;
     }
     browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.action === "openPopout") {
+        (async () => {
+          try {
+            const width = 340;
+            const height = 480;
+            await browser.windows.create({
+              url: browser.runtime.getURL("popup.html?popped=1"),
+              type: "popup",
+              width,
+              height,
+              left: message.left,
+              top: message.top
+            });
+            sendResponse({ success: true });
+          } catch (err) {
+            console.error("Failed to open popout:", err);
+            sendResponse({ success: false });
+          }
+        })();
+        return true;
+      }
+      if (message.action === "resetPipeline") {
+        console.log("[AI Background] Resetting AI Pipeline to switch hardware backends...");
+        if (classifierPipeline) {
+          classifierPipeline.dispose?.();
+        }
+        classifierPipeline = null;
+        sendResponse({ success: true });
+        return true;
+      }
       if (message.action === "analyzeText") {
         (async () => {
           try {

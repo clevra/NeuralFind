@@ -20,10 +20,32 @@
       color: #ffffff;
       display: flex;
       align-items: center;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
     .header-icon {
       font-size: 22px;
+    }
+    #popoutBtn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background 0.2s;
+      color: #a1a1aa;
+      width: auto;
+      box-shadow: none;
+    }
+    #popoutBtn:hover {
+      background: #3f3f5a;
+      transform: none;
+      box-shadow: none;
     }
     .toggle-container {
       display: flex;
@@ -73,6 +95,12 @@
     }
     input:checked + .slider:before {
       transform: translateX(20px);
+    }
+    .input-header {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
     }
     textarea { 
       width: 100%; 
@@ -148,8 +176,12 @@
   </style>
 </head>
 <body>
-  <h4><span class="header-icon">🦊</span> AI Content Sniper</h4>
-  
+  <h4>
+    <div class="header-left">
+      <span class="header-icon">🦊</span> AI Content Sniper
+    </div>
+    <button id="popoutBtn" title="Pin / Pop out window">📌</button>
+  </h4>
   <div class="toggle-container">
     <span class="toggle-label">Enable AI Scan</span>
     <label class="switch">
@@ -157,7 +189,16 @@
       <span class="slider"></span>
     </label>
   </div>
-
+  
+  <div class="toggle-container">
+    <span class="toggle-label">WebGPU (Experimental)</span>
+    <label class="switch">
+      <input type="checkbox" id="gpuToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+  
+  <div class="input-header">Prompt for AI Search:</div>
   <textarea id="prompt" placeholder="What are you looking for? (e.g. positive news, jobs, tech...)"></textarea>
   
   <div class="slider-container">
