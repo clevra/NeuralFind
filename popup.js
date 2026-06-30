@@ -127,6 +127,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Automatically scan new tabs when you switch to them (crucial for the pinned popout window!)
+  browser.tabs.onActivated.addListener(() => {
+    setTimeout(() => {
+      triggerScan();
+    }, 200); // Slight delay to ensure the new tab is ready
+  });
+
+  // Automatically scan the page when it finishes loading or refreshing
+  browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete' && tab.active) {
+      triggerScan();
+    }
+  });
+
   // Auto-scan on Slider change
   confidenceEl.addEventListener('input', () => {
     sliderValEl.innerText = `${confidenceEl.value}%`;

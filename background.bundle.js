@@ -33073,9 +33073,18 @@ var require_background = __commonJS({
       if (message.action === "analyzeText") {
         (async () => {
           try {
+            const startTime = performance.now();
             const classifier = await getPipeline();
             const output = await classifier(message.text, [message.prompt]);
-            sendResponse({ success: true, data: output });
+            const endTime = performance.now();
+            const storage = await browser.storage.local.get("activeDevice");
+            const currentDevice = storage.activeDevice || "unknown";
+            sendResponse({
+              success: true,
+              data: output,
+              device: currentDevice,
+              timeMs: Math.round(endTime - startTime)
+            });
           } catch (error) {
             console.error("[AI Background] Error during analysis:", error);
             sendResponse({ success: false, error: error.message });
