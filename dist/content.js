@@ -58,7 +58,7 @@ async function scanAndHighlight() {
           const score = response.data.scores[0]; 
           
           // Log exactly what happened directly to the user's web page console!
-          console.log(`[AI Content Sniper] 🤖 Hardware: [${response.device.toUpperCase()}] | Time: ${response.timeMs}ms | Score: ${(score * 100).toFixed(1)}% | Text: "${cleanText.substring(0, 40)}..."`);
+          console.log(`[Neural Find] 🤖 Hardware: [${response.device.toUpperCase()}] | Time: ${response.timeMs}ms | Score: ${(score * 100).toFixed(1)}% | Text: "${cleanText.substring(0, 40)}..."`);
 
           // Check the score against the user's custom Confidence Slider setting!
           if (score > aiConfidence) {
