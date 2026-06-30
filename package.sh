@@ -9,6 +9,8 @@ cp manifest.json dist/
 cp icon.jpg dist/
 cp background.bundle.js dist/
 cp content.js dist/
+cp popup.html dist/
+cp popup.js dist/
 cp -r wasm dist/
 
 # Create the zip file for the Firefox Add-on store
